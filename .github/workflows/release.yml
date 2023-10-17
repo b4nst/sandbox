@@ -18,11 +18,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=sha,format=short,prefix=sha-
       - name: GitHub release
         uses: ncipollo/release-action@v1
         with:
-          commit: main
-          tag: ${{ github.sha }}
+          commit: ${{ github.sha }}
+          tag: ${{ steps.meta.outputs.version }}
           makeLatest: true
           generateReleaseNotes: true
           bodyFile: body.md
