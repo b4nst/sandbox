@@ -1,0 +1,28 @@
+name: release
+on:
+  push:
+    branches:
+      - main
+
+# Only allows singleton
+concurrency: releaser
+
+permissions:
+  contents: write # needed for release
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: main
+          tag: ${{ github.sha }}
+          makeLatest: true
+          generateReleaseNotes: true
+          bodyFile: body.md
